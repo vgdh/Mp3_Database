@@ -25,6 +25,6 @@ namespace Mp3_Database
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<song> song { get; set; }
+        public virtual DbSet<Songs> Songs { get; set; }
     }
 }

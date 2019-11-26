@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +12,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Mp3_Database.Model;
 
 namespace Mp3_Database
 {
@@ -22,17 +20,12 @@ namespace Mp3_Database
     /// </summary>
     public partial class MainWindow : Window
     {
-        ApplicationContext db;
-
         public MainWindow()
         {
             InitializeComponent();
-
-            db = new ApplicationContext();
-            db.songs.Load();
-            this.DataContext = db.songs.Local.ToBindingList();
-
+            var db = new mainEntities();
+            db.Songs.Add(new Songs(){Autor = "1",Title = "2",Add_time = 22});
+            db.SaveChanges();
         }
-
     }
 }

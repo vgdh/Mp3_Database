@@ -12,7 +12,7 @@ namespace Mp3_Database
     using System;
     using System.Collections.Generic;
     
-    public partial class Songs
+    public partial class Song
     {
         public long id { get; set; }
         public string Autor { get; set; }

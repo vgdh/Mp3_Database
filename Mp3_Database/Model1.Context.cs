@@ -13,10 +13,10 @@ namespace Mp3_Database
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class mainEntities : DbContext
+    public partial class mainEntities1 : DbContext
     {
-        public mainEntities()
-            : base("name=mainEntities")
+        public mainEntities1()
+            : base("name=mainEntities1")
         {
         }
     
@@ -25,6 +25,6 @@ namespace Mp3_Database
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<Songs> Songs { get; set; }
+        public virtual DbSet<Song> Songs { get; set; }
     }
 }

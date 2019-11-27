@@ -7,6 +7,31 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+        </Grid.RowDefinitions>
+        <ListView Name="ListViewExistingSongs" Grid.Column="0" Grid.Row="0">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Autor}">Автор</GridViewColumn>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Title}">Название</GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <ListView Name="ListViewNewSongs" Grid.Column="1" Grid.Row="0" AllowDrop="True" Drop="ListViewNewSongs_OnDrop">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Autor}">Автор</GridViewColumn>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Title}">Название</GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
     </Grid>
 </Window>

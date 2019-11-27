@@ -4,12 +4,12 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="mainModel.Store" Provider="System.Data.SQLite.EF6" ProviderManifestToken="Data Source=E:\GIT\C_Sharp\Mp3_Database\database.sqlite" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="mainModel.Store" Provider="System.Data.SQLite.EF6" ProviderManifestToken="Data Source=E:\GIT\C_Sharp\Mp3_Database\Mp3_Database\database.sqlite" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Songs">
           <Key>
-            <PropertyRef Name="Autor" />
+            <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="integer" Nullable="false" />
+          <Property Name="id" Type="integer" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Autor" Type="nvarchar" MaxLength="2147483647" Nullable="false" />
           <Property Name="Title" Type="nvarchar" MaxLength="2147483647" Nullable="false" />
           <Property Name="Add_time" Type="integer" Nullable="false" />
@@ -21,14 +21,14 @@
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="mainModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityContainer Name="mainEntities" annotation:LazyLoadingEnabled="true" >
-          <EntitySet Name="Songs" EntityType="mainModel.Songs" />
+        <EntityContainer Name="mainEntities1" annotation:LazyLoadingEnabled="true" >
+          <EntitySet Name="Songs" EntityType="mainModel.Song" />
         </EntityContainer>
-        <EntityType Name="Songs">
+        <EntityType Name="Song">
           <Key>
-            <PropertyRef Name="Autor" />
+            <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="Int64" Nullable="false" />
+          <Property Name="id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Autor" Type="String" Nullable="false" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="Title" Type="String" Nullable="false" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="Add_time" Type="Int64" Nullable="false" />
@@ -38,9 +38,9 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="mainModelStoreContainer" CdmEntityContainer="mainEntities" >
+        <EntityContainerMapping StorageEntityContainer="mainModelStoreContainer" CdmEntityContainer="mainEntities1" >
           <EntitySetMapping Name="Songs">
-            <EntityTypeMapping TypeName="mainModel.Songs">
+            <EntityTypeMapping TypeName="mainModel.Song">
               <MappingFragment StoreEntitySet="Songs">
                 <ScalarProperty Name="Add_time" ColumnName="Add_time" />
                 <ScalarProperty Name="Title" ColumnName="Title" />

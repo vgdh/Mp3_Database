@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,9 +24,23 @@ namespace Mp3_Database
         public MainWindow()
         {
             InitializeComponent();
-            var db = new mainEntities();
-            db.Songs.Add(new Songs(){Autor = "1",Title = "2",Add_time = 22});
-            db.SaveChanges();
+            using (var db = new mainEntities1())
+            {
+                db.Songs.Add(new Song() { Autor = "1", Title = "2", Add_time = 22 });
+                db.SaveChanges();
+                this.ListViewExistingSongs.ItemsSource = db.Songs.Local;
+            }
+        }
+
+        private void ListViewNewSongs_OnDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            foreach (string file in files)
+            {
+                if (Directory.Exists(file))
+                    continue;
+            }
+
         }
     }
 }

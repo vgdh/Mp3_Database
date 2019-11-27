@@ -10,7 +10,7 @@
             <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="integer" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Autor" Type="nvarchar" MaxLength="2147483647" Nullable="false" />
+          <Property Name="Artist" Type="nvarchar" MaxLength="2147483647" Nullable="false" />
           <Property Name="Title" Type="nvarchar" MaxLength="2147483647" Nullable="false" />
           <Property Name="Add_time" Type="integer" Nullable="false" />
         </EntityType>
@@ -29,9 +29,9 @@
             <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Autor" Type="String" Nullable="false" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="Title" Type="String" Nullable="false" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="Add_time" Type="Int64" Nullable="false" />
+          <Property Name="Artist" Type="String" Nullable="false" MaxLength="2147483647" FixedLength="false" Unicode="true" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -42,9 +42,9 @@
           <EntitySetMapping Name="Songs">
             <EntityTypeMapping TypeName="mainModel.Song">
               <MappingFragment StoreEntitySet="Songs">
+                <ScalarProperty Name="Artist" ColumnName="Artist" />
                 <ScalarProperty Name="Add_time" ColumnName="Add_time" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
-                <ScalarProperty Name="Autor" ColumnName="Autor" />
                 <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>

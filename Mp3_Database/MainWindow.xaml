@@ -18,7 +18,7 @@
         <ListView Name="ListViewExistingSongs" Grid.Column="0" Grid.Row="0">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn DisplayMemberBinding="{Binding Path=Autor}">Автор</GridViewColumn>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Artist}">Исполнитель</GridViewColumn>
                     <GridViewColumn DisplayMemberBinding="{Binding Path=Title}">Название</GridViewColumn>
                 </GridView>
             </ListView.View>
@@ -27,7 +27,7 @@
         <ListView Name="ListViewNewSongs" Grid.Column="1" Grid.Row="0" AllowDrop="True" Drop="ListViewNewSongs_OnDrop">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn DisplayMemberBinding="{Binding Path=Autor}">Автор</GridViewColumn>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Artist}">Исполнитель</GridViewColumn>
                     <GridViewColumn DisplayMemberBinding="{Binding Path=Title}">Название</GridViewColumn>
                 </GridView>
             </ListView.View>

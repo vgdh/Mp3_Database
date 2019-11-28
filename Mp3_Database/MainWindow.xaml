@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Mp3_Database"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Мои прослушанные треки MP3" Height="600" Width="1500">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition></ColumnDefinition>
@@ -20,6 +20,7 @@
                 <GridView>
                     <GridViewColumn DisplayMemberBinding="{Binding Path=Artist}">Исполнитель</GridViewColumn>
                     <GridViewColumn DisplayMemberBinding="{Binding Path=Title}">Название</GridViewColumn>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=AddTimeDateTime, StringFormat='dd-MM-yyyy (HH:mm:ss)'}">Дата добавления трека</GridViewColumn>
                 </GridView>
             </ListView.View>
         </ListView>
@@ -29,9 +30,37 @@
                 <GridView>
                     <GridViewColumn DisplayMemberBinding="{Binding Path=Artist}">Исполнитель</GridViewColumn>
                     <GridViewColumn DisplayMemberBinding="{Binding Path=Title}">Название</GridViewColumn>
+                    <GridViewColumn Width="50">Путь
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=FilePath}" HorizontalAlignment="Right"></TextBlock>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=AddTimeDateTime, StringFormat='dd-MM-yyyy (HH:mm:ss)'}">Дата добавления трека</GridViewColumn>
                 </GridView>
             </ListView.View>
         </ListView>
+        <Grid Grid.Column="1" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
 
+            <Label Name="NewSongCount" Content="{Binding ElementName=ListViewNewSongs, Path=Items.Count, Mode=OneWay}"></Label>
+            <Button Grid.Column="1" Click="Button_Click_AddSongsToDatabase">Только добавить в базу прослушанных</Button>
+            <Button Grid.Column="2" Click="Button_Click_CopySongs">Скопировать не прослушанные треки в "MP3__Output"</Button>
+        </Grid>
+
+        <Grid Grid.Column="0" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <Label Name="ExistingSongCount" Content="{Binding ElementName=ListViewExistingSongs, Path=Items.Count, Mode=OneWay}"></Label>
+            <Button Grid.Column="1" Click="Button_Click_RemoveSongFromDatabase" Content="Удалить выделенные треки из базы"/>
+        </Grid>
     </Grid>
 </Window>

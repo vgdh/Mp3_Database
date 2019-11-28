@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -7,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -42,7 +44,9 @@ namespace Mp3_Database
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             List<string> filePathsList = GetFilePathsRecursive(files);
-            ListViewNewSongs.ItemsSource = CreateListOfSongs(filePathsList);
+            ObservableCollection<Song> newSongsList = CreateListOfSongs(filePathsList);
+            ListViewNewSongs.ItemsSource = newSongsList;
+            DuplicateSongCount.Content = newSongsList.Count(song => song.ExistEarlier == true);
         }
 
         private List<string> GetFilePathsRecursive(string[] files)
@@ -68,30 +72,91 @@ namespace Mp3_Database
             return filePathsListForReturn;
         }
 
-        static ObservableCollection<Song> CreateListOfSongs(List<string> filesList)
+        private ObservableCollection<Song> CreateListOfSongs(List<string> filesList)
         {
             ObservableCollection<Song> songs = new ObservableCollection<Song>();
             foreach (var filePath in filesList)
             {
                 using (var mp3 = new Mp3(filePath))
                 {
-                    Id3Tag tag = mp3.GetTag(Id3TagFamily.Version2X);
-                    Id3Tag tag1 = mp3.GetTag(Id3TagFamily.Version1X);
+                    Id3Tag tag = null;
+                    Id3Tag tag_1x = null;
+                    Id3Tag tag_2x = null;
 
-                    if (string.IsNullOrEmpty(tag.Title) || string.IsNullOrEmpty(tag.Artists.Value[0]))
+                    try
                     {
-                        MessageBox.Show($"Трек {filePath} MP3 tag не содержит в себе название трека");
+                        tag_1x = mp3.GetTag(Id3TagFamily.Version1X);
+                    }
+                    catch (Exception e)
+                    {
+                        Logging(e);
+                    }
+
+                    try
+                    {
+                        tag_2x = mp3.GetTag(Id3TagFamily.Version2X);
+                    }
+                    catch (Exception e)
+                    {
+                        Logging(e);
+                    }
+
+
+                    if (tag_2x != null)
+                    {
+                        tag = tag_2x;
+                    }
+                    else
+                    {
+                        tag = tag_1x;
+                    }
+
+                    if (string.IsNullOrEmpty(tag.Title))
+                    {
+                        MessageBox.Show($"Трек {filePath} не содержит в себе название трека в MP3 TAG");
                     }
                     else
                     {
                         var unixTime = (int)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
+                        //Чтение даты из времени создания файла в папке
+                        //var unixTime = (int)(File.GetCreationTimeUtc(filePath) - new DateTime(1970, 1, 1)).TotalSeconds;
+                        string artist;
 
-                        Song newSong = new Song(tag.Artists.Value[0], tag.Title, unixTime, filePath);
+
+                        if (tag.Artists.Value.Count > 0 && tag.Artists.Value[0].Length < 50)
+                        {
+                            artist = tag.Artists.Value[0];
+                        }
+                        else if (!string.IsNullOrEmpty(tag.Band.Value))
+                        {
+                            artist = tag.Band.Value;
+                        }
+                        else
+                        {
+                            artist = "";
+                        }
+
+                        Song newSong = new Song(artist, tag.Title, unixTime, filePath);
+
+                        if (db.Songs.Count(xx => xx.Title == newSong.Title & xx.Artist == newSong.Artist) > 0)
+                        {
+                            newSong.ExistEarlier = true;
+                        }
+
                         songs.Add(newSong);
                     }
                 }
             }
             return songs;
+        }
+
+        private static void Logging(Exception e)
+        {
+            string filePath;
+            StringBuilder sb = new StringBuilder();
+            sb.Append(e.ToString());
+            File.AppendAllText("log.txt", sb.ToString());
+            sb.Clear();
         }
 
         private void Button_Click_CopySongs(object sender, RoutedEventArgs e)
@@ -118,7 +183,13 @@ namespace Mp3_Database
                 Directory.CreateDirectory(".\\MP3_Output");
             }
 
-            File.Copy(song.FilePath, $".\\MP3_Output\\{song.Artist} - {song.Title}.mp3", overwrite: true);
+            string fileName = $"{song.Artist} - {song.Title}.mp3";
+
+            string regexSearch = new string(System.IO.Path.GetInvalidFileNameChars());
+            Regex r = new Regex($"[{Regex.Escape(regexSearch)}]");
+            fileName = r.Replace(fileName, "");
+
+            File.Copy(song.FilePath, $".\\MP3_Output\\{fileName}", overwrite: true);
         }
 
         private void Button_Click_RemoveSongFromDatabase(object sender, RoutedEventArgs e)
@@ -148,6 +219,72 @@ namespace Mp3_Database
 
             MessageBox.Show("Дреки добалены в базу данных");
         }
+        GridViewColumnHeader _lastHeaderClicked = null;
+        ListSortDirection _lastDirection = ListSortDirection.Ascending;
+
+        #region Сортировка по клику на столбец
+        void GridViewColumnHeaderClickedHandler(object sender, RoutedEventArgs e)
+        {
+            var headerClicked = e.OriginalSource as GridViewColumnHeader;
+            ListSortDirection direction;
+
+            if (headerClicked != null)
+            {
+                if (headerClicked.Role != GridViewColumnHeaderRole.Padding)
+                {
+                    if (headerClicked != _lastHeaderClicked)
+                    {
+                        direction = ListSortDirection.Ascending;
+                    }
+                    else
+                    {
+                        if (_lastDirection == ListSortDirection.Ascending)
+                        {
+                            direction = ListSortDirection.Descending;
+                        }
+                        else
+                        {
+                            direction = ListSortDirection.Ascending;
+                        }
+                    }
+                    var columnBinding = headerClicked.Column.DisplayMemberBinding as Binding;
+                    var sortBy = columnBinding?.Path.Path ?? headerClicked.Column.Header as string;
+
+                    Sort(sortBy, direction, ((ListView)sender).ItemsSource);
+
+                    if (direction == ListSortDirection.Ascending)
+                    {
+                        headerClicked.Column.HeaderTemplate =
+                          Resources["HeaderTemplateArrowUp"] as DataTemplate;
+                    }
+                    else
+                    {
+                        headerClicked.Column.HeaderTemplate =
+                          Resources["HeaderTemplateArrowDown"] as DataTemplate;
+                    }
+
+                    // Remove arrow from previously sorted header
+                    if (_lastHeaderClicked != null && _lastHeaderClicked != headerClicked)
+                    {
+                        _lastHeaderClicked.Column.HeaderTemplate = null;
+                    }
+
+                    _lastHeaderClicked = headerClicked;
+                    _lastDirection = direction;
+                }
+            }
+        }
+        private void Sort(string sortBy, ListSortDirection direction, IEnumerable itemSource)
+        {
+            ICollectionView dataView = CollectionViewSource.GetDefaultView(itemSource);
+
+            dataView.SortDescriptions.Clear();
+            SortDescription sd = new SortDescription(sortBy, direction);
+            dataView.SortDescriptions.Add(sd);
+            dataView.Refresh();
+        }
+        #endregion
+
     }
 
     partial class Song
@@ -168,7 +305,7 @@ namespace Mp3_Database
         }
 
         public string FilePath { get; set; }
-
+        public bool ExistEarlier { get; set; } = false;
         public DateTime AddTimeDateTime => (new DateTime(1970, 1, 1, 0, 0, 0, 0)).AddSeconds(this.Add_time);
     }
 }

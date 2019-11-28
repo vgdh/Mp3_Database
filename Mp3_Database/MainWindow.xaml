@@ -15,21 +15,22 @@
             <RowDefinition></RowDefinition>
             <RowDefinition Height="30"></RowDefinition>
         </Grid.RowDefinitions>
-        <ListView Name="ListViewExistingSongs" Grid.Column="0" Grid.Row="0">
+        <ListView Name="ListViewExistingSongs" Grid.Column="0" Grid.Row="0" GridViewColumnHeader.Click="GridViewColumnHeaderClickedHandler">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn DisplayMemberBinding="{Binding Path=Artist}">Исполнитель</GridViewColumn>
-                    <GridViewColumn DisplayMemberBinding="{Binding Path=Title}">Название</GridViewColumn>
+                    <GridViewColumn Width="300" DisplayMemberBinding="{Binding Path=Artist}">Исполнитель</GridViewColumn>
+                    <GridViewColumn Width="300" DisplayMemberBinding="{Binding Path=Title}">Название</GridViewColumn>
                     <GridViewColumn DisplayMemberBinding="{Binding Path=AddTimeDateTime, StringFormat='dd-MM-yyyy (HH:mm:ss)'}">Дата добавления трека</GridViewColumn>
                 </GridView>
             </ListView.View>
+
         </ListView>
 
         <ListView Name="ListViewNewSongs" Grid.Column="1" Grid.Row="0" AllowDrop="True" Drop="ListViewNewSongs_OnDrop">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn DisplayMemberBinding="{Binding Path=Artist}">Исполнитель</GridViewColumn>
-                    <GridViewColumn DisplayMemberBinding="{Binding Path=Title}">Название</GridViewColumn>
+                    <GridViewColumn Width="300" DisplayMemberBinding="{Binding Path=Artist}">Исполнитель</GridViewColumn>
+                    <GridViewColumn Width="300" DisplayMemberBinding="{Binding Path=Title}">Название</GridViewColumn>
                     <GridViewColumn Width="50">Путь
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
@@ -37,20 +38,41 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn DisplayMemberBinding="{Binding Path=AddTimeDateTime, StringFormat='dd-MM-yyyy (HH:mm:ss)'}">Дата добавления трека</GridViewColumn>
+                    <GridViewColumn Width="50" DisplayMemberBinding="{Binding Path=AddTimeDateTime, StringFormat='dd-MM-yyyy (HH:mm:ss)'}">Дата добавления трека</GridViewColumn>
                 </GridView>
             </ListView.View>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="{x:Type ListViewItem}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Path=ExistEarlier}" Value="true">
+                            <Setter Property="Background" Value="LightBlue"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ListView.ItemContainerStyle>
         </ListView>
         <Grid Grid.Column="1" Grid.Row="1">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50"></ColumnDefinition>
                 <ColumnDefinition Width="50"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
-            <Label Name="NewSongCount" Content="{Binding ElementName=ListViewNewSongs, Path=Items.Count, Mode=OneWay}"></Label>
-            <Button Grid.Column="1" Click="Button_Click_AddSongsToDatabase">Только добавить в базу прослушанных</Button>
-            <Button Grid.Column="2" Click="Button_Click_CopySongs">Скопировать не прослушанные треки в "MP3__Output"</Button>
+            <Label Name="NewSongCount" 
+                   Grid.Column="0"
+                   Content="{Binding ElementName=ListViewNewSongs, Path=Items.Count, Mode=OneWay}"
+                   HorizontalContentAlignment="Center" ></Label>
+
+            <Label Name="DuplicateSongCount" 
+                   Grid.Column="1" 
+                   HorizontalContentAlignment="Center" 
+                   Background="LightBlue"></Label>
+            
+            <Button Grid.Column="2" 
+                    Click="Button_Click_AddSongsToDatabase">Только добавить в базу прослушанных</Button>
+            <Button Grid.Column="3" 
+                    Click="Button_Click_CopySongs">Скопировать не прослушанные треки в "MP3__Output"</Button>
         </Grid>
 
         <Grid Grid.Column="0" Grid.Row="1">

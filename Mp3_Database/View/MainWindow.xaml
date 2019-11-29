@@ -1,4 +1,4 @@
-﻿<Window x:Class="Mp3_Database.MainWindow"
+﻿<Window x:Class="Mp3_Database.View.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -21,7 +21,10 @@
             <RowDefinition></RowDefinition>
             <RowDefinition Height="30"></RowDefinition>
         </Grid.RowDefinitions>
-        <ListView Name="ListViewExistingSongs" Grid.Column="0" Grid.Row="0" >
+        <ListView Name="ListViewExistingSongs" Grid.Column="0" Grid.Row="0" 
+                  GridViewColumnHeader.Click="http://isuruherath.blogspot.com/2015/01/wpf-mvvm-datagridview-column-header.html"
+                  ItemsSource="{Binding Path=ExistingSongs}"
+                  SelectionChanged="ListViewExistingSongs_OnSelectionChanged">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Width="300" DisplayMemberBinding="{Binding Path=Artist}">Исполнитель</GridViewColumn>
@@ -30,6 +33,11 @@
                 </GridView>
             </ListView.View>
 
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem" >
+                    <Setter Property="IsSelected" Value="{Binding IsSelected}"/>
+                </Style>
+            </ListView.ItemContainerStyle>
         </ListView>
 
         <ListView Name="ListViewNewSongs" Grid.Column="1" Grid.Row="0" AllowDrop="True">
@@ -88,7 +96,7 @@
             </Grid.ColumnDefinitions>
 
             <Label Name="ExistingSongCount" Content="{Binding ElementName=ListViewExistingSongs, Path=Items.Count, Mode=OneWay}"></Label>
-            <Button Grid.Column="1" Content="Удалить выделенные треки из базы"/>
+            <Button Grid.Column="1" Content="Удалить выделенные треки из базы" Command="{Binding RemoveSongsCommand}"/>
         </Grid>
     </Grid>
 </Window>

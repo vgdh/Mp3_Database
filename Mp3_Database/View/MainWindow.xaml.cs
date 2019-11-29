@@ -1,27 +1,12 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
+﻿using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Id3;
 using Mp3_Database.Model;
+using Mp3_Database.ViewModel;
 
-namespace Mp3_Database
+namespace Mp3_Database.View
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -36,6 +21,8 @@ namespace Mp3_Database
             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(ListViewExistingSongs.ItemsSource);
             view.SortDescriptions.Add(new SortDescription("Artist", ListSortDirection.Ascending));
             view.SortDescriptions.Add(new SortDescription("Title", ListSortDirection.Ascending));
+
+            this.DataContext = new MainWindowViewModel();
         }
 
         //private void ListViewNewSongs_OnDrop(object sender, DragEventArgs e)
@@ -217,72 +204,17 @@ namespace Mp3_Database
 
         //    MessageBox.Show("Дреки добалены в базу данных");
         //}
-        //GridViewColumnHeader _lastHeaderClicked = null;
-        //ListSortDirection _lastDirection = ListSortDirection.Ascending;
 
-        //#region Сортировка по клику на столбец
-        //void GridViewColumnHeaderClickedHandler(object sender, RoutedEventArgs e)
-        //{
-        //    var headerClicked = e.OriginalSource as GridViewColumnHeader;
-        //    ListSortDirection direction;
 
-        //    if (headerClicked != null)
-        //    {
-        //        if (headerClicked.Role != GridViewColumnHeaderRole.Padding)
-        //        {
-        //            if (headerClicked != _lastHeaderClicked)
-        //            {
-        //                direction = ListSortDirection.Ascending;
-        //            }
-        //            else
-        //            {
-        //                if (_lastDirection == ListSortDirection.Ascending)
-        //                {
-        //                    direction = ListSortDirection.Descending;
-        //                }
-        //                else
-        //                {
-        //                    direction = ListSortDirection.Ascending;
-        //                }
-        //            }
-        //            var columnBinding = headerClicked.Column.DisplayMemberBinding as Binding;
-        //            var sortBy = columnBinding?.Path.Path ?? headerClicked.Column.Header as string;
+        
 
-        //            Sort(sortBy, direction, ((ListView)sender).ItemsSource);
+        private void ListViewExistingSongs_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ListView listView = (ListView) sender;
+            ((MainWindowViewModel) (((Grid) listView.Parent).DataContext)).SelectedExistedSongs =
+                ListViewExistingSongs.SelectedItems.Cast<Song>().ToList();
 
-        //            if (direction == ListSortDirection.Ascending)
-        //            {
-        //                headerClicked.Column.HeaderTemplate =
-        //                  Resources["HeaderTemplateArrowUp"] as DataTemplate;
-        //            }
-        //            else
-        //            {
-        //                headerClicked.Column.HeaderTemplate =
-        //                  Resources["HeaderTemplateArrowDown"] as DataTemplate;
-        //            }
-
-        //            // Remove arrow from previously sorted header
-        //            if (_lastHeaderClicked != null && _lastHeaderClicked != headerClicked)
-        //            {
-        //                _lastHeaderClicked.Column.HeaderTemplate = null;
-        //            }
-
-        //            _lastHeaderClicked = headerClicked;
-        //            _lastDirection = direction;
-        //        }
-        //    }
-        //}
-        //private void Sort(string sortBy, ListSortDirection direction, IEnumerable itemSource)
-        //{
-        //    ICollectionView dataView = CollectionViewSource.GetDefaultView(itemSource);
-
-        //    dataView.SortDescriptions.Clear();
-        //    SortDescription sd = new SortDescription(sortBy, direction);
-        //    dataView.SortDescriptions.Add(sd);
-        //    dataView.Refresh();
-        //}
-        //#endregion
-
+        }
     }
 
 

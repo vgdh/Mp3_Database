@@ -22,5 +22,6 @@ namespace Mp3_Database.Model
         public string FilePath { get; set; }
         public bool ExistEarlier { get; set; } = false;
         public DateTime AddTimeDateTime => (new DateTime(1970, 1, 1, 0, 0, 0, 0)).AddSeconds(this.Add_time);
+        public bool IsSelected { get; set; }
     }
 }

@@ -7,16 +7,16 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Mp3_Database
+namespace Mp3_Database.Model
 {
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class mainEntities1 : DbContext
+    public partial class mainEntities : DbContext
     {
-        public mainEntities1()
-            : base("name=mainEntities1")
+        public mainEntities()
+            : base("name=mainEntities")
         {
         }
     

@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Mp3_Database
+namespace Mp3_Database.Model
 {
     using System;
     using System.Collections.Generic;
@@ -15,8 +15,8 @@ namespace Mp3_Database
     public partial class Song
     {
         public long id { get; set; }
+        public string Artist { get; set; }
         public string Title { get; set; }
         public long Add_time { get; set; }
-        public string Artist { get; set; }
     }
 }

@@ -4,6 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Mp3_Database.ViewModel"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:command="http://www.galasoft.ch/mvvmlight"
         mc:Ignorable="d"
         Title="Мои прослушанные треки MP3" Height="600" Width="1500">
     <!--DataContext="{Binding  Source={StaticResource ResourceKey=Locator}, Path=Main }"-->
@@ -21,10 +23,19 @@
             <RowDefinition></RowDefinition>
             <RowDefinition Height="30"></RowDefinition>
         </Grid.RowDefinitions>
+      
         <ListView Name="ListViewExistingSongs" Grid.Column="0" Grid.Row="0" 
-                  GridViewColumnHeader.Click="http://isuruherath.blogspot.com/2015/01/wpf-mvvm-datagridview-column-header.html"
                   ItemsSource="{Binding Path=ExistingSongs}"
+                  GridViewColumnHeader.Click="GridViewColumnHeaderClickedHandler"
                   SelectionChanged="ListViewExistingSongs_OnSelectionChanged">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SelectionChanged">
+                    <command:EventToCommand
+                        Command="{Binding SelectionChangedCommand}"
+                        CommandParameter="{Binding SelectedItems, ElementName=ListViewExistingSongs}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+          
             <ListView.View>
                 <GridView>
                     <GridViewColumn Width="300" DisplayMemberBinding="{Binding Path=Artist}">Исполнитель</GridViewColumn>
@@ -32,15 +43,16 @@
                     <GridViewColumn DisplayMemberBinding="{Binding Path=AddTimeDateTime, StringFormat='dd-MM-yyyy (HH:mm:ss)'}">Дата добавления трека</GridViewColumn>
                 </GridView>
             </ListView.View>
-
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem" >
-                    <Setter Property="IsSelected" Value="{Binding IsSelected}"/>
-                </Style>
-            </ListView.ItemContainerStyle>
         </ListView>
 
-        <ListView Name="ListViewNewSongs" Grid.Column="1" Grid.Row="0" AllowDrop="True">
+        <ListView Name="ListViewNewSongs" Grid.Column="1" Grid.Row="0" AllowDrop="True" ItemsSource="{Binding Path=NewSongsList}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="Drop">
+                    <command:EventToCommand
+                        Command="{Binding DropNewSongsCommand}"
+                        PassEventArgsToCommand="True"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
             <ListView.View>
                 <GridView>
                     <GridViewColumn Width="300" DisplayMemberBinding="{Binding Path=Artist}">Исполнитель</GridViewColumn>
@@ -83,10 +95,8 @@
                    HorizontalContentAlignment="Center" 
                    Background="LightBlue"></Label>
 
-            <Button Grid.Column="2" 
-                    >Только добавить в базу прослушанных</Button>
-            <Button Grid.Column="3" 
-                    >Скопировать не прослушанные треки в "MP3__Output"</Button>
+            <Button Grid.Column="2" Command="{Binding OnlyAddToDatabaseCommand}">Только добавить в базу прослушанных</Button>
+            <Button Grid.Column="3" Command="{Binding CopyNewSongsCommand}">Скопировать не прослушанные треки в "MP3__Output"</Button>
         </Grid>
 
         <Grid Grid.Column="0" Grid.Row="1">
@@ -96,7 +106,7 @@
             </Grid.ColumnDefinitions>
 
             <Label Name="ExistingSongCount" Content="{Binding ElementName=ListViewExistingSongs, Path=Items.Count, Mode=OneWay}"></Label>
-            <Button Grid.Column="1" Content="Удалить выделенные треки из базы" Command="{Binding RemoveSongsCommand}"/>
+            <Button Grid.Column="1" Content="Удалить выделенные треки из базы" Command="{Binding RemoveSongsFromDatabaseCommand}"/>
         </Grid>
     </Grid>
 </Window>

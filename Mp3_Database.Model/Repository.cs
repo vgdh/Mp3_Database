@@ -7,30 +7,31 @@ namespace Mp3_Database.Model
 
     public static class Repository
     {
-        private static mainEntities db = new mainEntities();
-        public static ObservableCollection<Song> GetAllSongs
+        private static readonly mainEntities Db = new mainEntities();
+
+        public static ObservableCollection<Song> GetAllSongs()
         {
-            get
-            {
-                db.Songs.Load();
-                return db.Songs.Local;
-            }
+            Db.Songs.Load();
+            return Db.Songs.Local;
         }
 
         public static void AddSongs(IEnumerable<Song> songsList)
         {
-            using (var db = new mainEntities())
-            {
-                db.Songs.AddRange(songsList);
-                db.SaveChanges();
-            }
+            Db.Songs.AddRange(songsList);
+            Db.SaveChanges();
+        }
+
+        public static void AddSong(Song song)
+        {
+            Db.Songs.Add(song);
+            Db.SaveChanges();
         }
 
         public static void RemoveSongs(List<Song> songsList)
         {
 
-            db.Songs.RemoveRange(songsList);
-            db.SaveChanges();
+            Db.Songs.RemoveRange(songsList);
+            Db.SaveChanges();
         }
     }
 }

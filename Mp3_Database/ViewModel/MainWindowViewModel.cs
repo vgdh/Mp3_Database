@@ -23,7 +23,7 @@ using Mp3_Database.View;
 namespace Mp3_Database.ViewModel
 {
 
-    public class MainWindowViewModel : ViewModelBase
+    public class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
     {
         public void MainViewModel()
         {
@@ -42,7 +42,44 @@ namespace Mp3_Database.ViewModel
 
         public ObservableCollection<Song> NewSongsList { get; set; } = new ObservableCollection<Song>();
         public bool OneDirectoryDroped { get; set; } = false;
-        public string OneDirectoryName { get; set; } = string.Empty;
+
+        private int _duplicateSongCount;
+        public int DuplicateSongCount
+        {
+            get { return _duplicateSongCount; }
+            set
+            {
+                if (_duplicateSongCount != value)
+                {
+                    _duplicateSongCount = value;
+                    OnPropertyChanged(nameof(DuplicateSongCount));
+                }
+            }
+        }
+
+
+        private string _oneDirectoryName = "MP3_Output";
+        public string OneDirectoryName 
+        {
+            get { return _oneDirectoryName; }
+            set
+            {
+                if (_oneDirectoryName != value)
+                {
+                    _oneDirectoryName = value;
+                    OnPropertyChanged("OneDirectoryName");
+                    OnPropertyChanged(nameof(OneDirectoryName));
+                }
+            }
+        }
+
+        public new event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged(String propertyName)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
 
         #region RemoveSongCommand
         RelayCommand _removeSongsFromDatabaseCommand;
@@ -95,6 +132,9 @@ namespace Mp3_Database.ViewModel
                 outputDir = "MP3_Output";
             }
 
+
+
+
             foreach (Song song in NewSongsList)
             {
                 if (ExistingSongs.Count(sng => sng.Artist == song.Artist & sng.Title == song.Title) == 0)
@@ -136,11 +176,8 @@ namespace Mp3_Database.ViewModel
             fileName = r.Replace(fileName, "");
 
             File.Copy(song.FilePath, $".\\{folder}\\{fileName}", overwrite: true);
+            UpdateDuplicateSongCounter();
         }
-
-
-
-
         #endregion
 
         #region AddToDatabaseComand
@@ -162,6 +199,7 @@ namespace Mp3_Database.ViewModel
             {
                 song.ExistEarlier = true;
             }
+            UpdateDuplicateSongCounter();
         }
 
         public bool CanExecuteOnlyAddToDatabaseCommand()
@@ -170,11 +208,6 @@ namespace Mp3_Database.ViewModel
                 return false;
             return true;
         }
-
-
-
-
-
         #endregion
 
         #region DropCommand
@@ -212,7 +245,12 @@ namespace Mp3_Database.ViewModel
             {
                 NewSongsList.Add(song);
             }
+            UpdateDuplicateSongCounter();
+        }
 
+        private void UpdateDuplicateSongCounter()
+        {
+            DuplicateSongCount = NewSongsList.Count(x => x.ExistEarlier);
         }
 
         private List<string> GetFilePathsRecursive(string[] files)
@@ -315,6 +353,7 @@ namespace Mp3_Database.ViewModel
             }
             return songs;
         }
+   
         private static void Logging(Exception e)
         {
             string filePath;
@@ -323,7 +362,7 @@ namespace Mp3_Database.ViewModel
             File.AppendAllText("log.txt", sb.ToString());
             sb.Clear();
         }
-
+        
         #endregion
 
 

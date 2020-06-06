@@ -22,12 +22,12 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto" MinHeight="72.667"></RowDefinition>
         </Grid.RowDefinitions>
 
-       
+
         <Label Grid.Column="0" HorizontalContentAlignment="Center" FontWeight="Bold" FontSize="18">Прослушанные треки</Label>
-        <Label Grid.Column="1" HorizontalContentAlignment="Center" FontWeight="Bold" FontSize="18">Треки для добавления в базу</Label>
+        <Label Grid.Column="1" HorizontalContentAlignment="Center" FontWeight="Bold" FontSize="18">Треки для обработки</Label>
 
         <ListView Name="ListViewExistingSongs" Grid.Column="0" Grid.Row="1" 
                   ItemsSource="{Binding Path=ExistingSongs}"
@@ -40,7 +40,7 @@
                         CommandParameter="{Binding SelectedItems, ElementName=ListViewExistingSongs}" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
-          
+
             <ListView.View>
                 <GridView>
                     <GridViewColumn Width="300" DisplayMemberBinding="{Binding Path=Artist}">Исполнитель</GridViewColumn>
@@ -61,7 +61,7 @@
                 <Label Name="ExistingSongCount" Content="{Binding ElementName=ListViewExistingSongs, Path=Items.Count, Mode=OneWay}"></Label>
             </StackPanel>
 
-            <Button Grid.Column="2" Command="{Binding RemoveSongsFromDatabaseCommand}">
+            <Button Grid.Column="2" Command="{Binding RemoveSelectedSongsFromDatabaseCommand}">
                 <TextBlock TextWrapping="Wrap">Удалить выделенные треки из базы</TextBlock>
             </Button>
         </Grid>
@@ -98,36 +98,45 @@
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>
-        
+
         <Grid Grid.Column="1" Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="1.5*"/>
+                <ColumnDefinition Width="1.1*"></ColumnDefinition>
+                <ColumnDefinition Width="2*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <Label>Треков для обработки: </Label>
+                    <Label>Треков для обработки:</Label>
                     <Label Name="NewSongCount" 
                            Content="{Binding ElementName=ListViewNewSongs, Path=Items.Count, Mode=OneWay}"
                            HorizontalContentAlignment="Center" ></Label>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Background="LightBlue">
-                    <Label>Треков совпавших с существующими в базе: </Label>
+                    <Label>Треков совпавших с существующими в базе:</Label>
                     <Label Name="DuplicateSongCount" 
                            HorizontalContentAlignment="Center" 
                            Content="{Binding DuplicateSongCount}"
                            ></Label>
                 </StackPanel>
             </StackPanel>
+
             <Button Grid.Column="1" 
                     Command="{Binding OnlyAddToDatabaseCommand}">
-                <TextBlock TextWrapping="Wrap">Только добавить в базу прослушанных</TextBlock> 
+                <TextBlock TextWrapping="Wrap">Только добавить в базу</TextBlock>
             </Button>
-            <Button Grid.Column="2" Command="{Binding CopyNewSongsCommand}">
-                <TextBlock TextWrapping="Wrap" Text="{Binding Path=OneDirectoryName, StringFormat='Скопировать не прослушанные треки в папку - {0}'}"></TextBlock>  
+
+            <Button Grid.Column="2" 
+                    Command="{Binding RemoveSongsFromDatabaseCommand}">
+                <TextBlock TextWrapping="Wrap">Удалить из базы</TextBlock>
+
             </Button>
+            <Button Grid.Column="3" Command="{Binding CopyNewSongsCommand}">
+                <TextBlock TextWrapping="Wrap" Text="{Binding Path=OneDirectoryName, StringFormat='Добавить в базу и скопировать треки в папку - {0}'}"></TextBlock>
+            </Button>
+
         </Grid>
 
     </Grid>

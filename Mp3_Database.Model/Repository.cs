@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
+using System.Linq;
 
 namespace Mp3_Database.Model
 {
@@ -27,11 +28,26 @@ namespace Mp3_Database.Model
             Db.SaveChanges();
         }
 
-        public static void RemoveSongs(List<Song> songsList)
+        public static void RemoveSongs(IEnumerable<Song> songsList)
         {
+            List<Song> sList = new List<Song>();
+            foreach (var song in songsList)
+            {
+                var foundSong = Db.Songs.FirstOrDefault(x => x.Artist == song.Artist && x.Title == song.Title);
+                if (foundSong != null)
+                    sList.Add(foundSong);
+            }
 
-            Db.Songs.RemoveRange(songsList);
-            Db.SaveChanges();
+            if (sList.Count != 0)
+            {
+                Db.Songs.RemoveRange(sList);
+                Db.SaveChanges();
+
+                foreach (var song in songsList)
+                    song.ExistEarlier = false;
+            }
+
+
         }
     }
 }

@@ -40,7 +40,21 @@ namespace Mp3_Database.ViewModel
 
         public List<Song> SelectedExistedSongs { get; set; } = new List<Song>();
 
-        public ObservableCollection<Song> NewSongsList { get; set; } = new ObservableCollection<Song>();
+
+        public ObservableCollection<Song> _newSongsList = new ObservableCollection<Song>();
+        public ObservableCollection<Song> NewSongsList
+        {
+            get { return _newSongsList; }
+            set { 
+                _newSongsList = value; 
+                _removeSongsFromDatabaseCommand.RaiseCanExecuteChanged();
+                _onlyAddToDatabaseSongsCommand.RaiseCanExecuteChanged();
+                _copyNewSongsCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+
+
         public bool OneDirectoryDroped { get; set; } = false;
 
         private int _duplicateSongCount;
@@ -59,7 +73,7 @@ namespace Mp3_Database.ViewModel
 
 
         private string _oneDirectoryName = "MP3_Output";
-        public string OneDirectoryName 
+        public string OneDirectoryName
         {
             get { return _oneDirectoryName; }
             set
@@ -81,7 +95,32 @@ namespace Mp3_Database.ViewModel
         }
 
 
-        #region RemoveSongCommand
+        #region RemoveSelectedSongsCommand
+        RelayCommand _removeSelectedSongsFromDatabaseCommand;
+        public ICommand RemoveSelectedSongsFromDatabaseCommand
+        {
+            get
+            {
+                if (_removeSelectedSongsFromDatabaseCommand == null)
+                    _removeSelectedSongsFromDatabaseCommand = new RelayCommand(ExecuteRemoveSelectedSongsFromDatabaseCommand, CanExecuteRemoveSelectedSongsFromDatabaseCommand);
+                return _removeSelectedSongsFromDatabaseCommand;
+            }
+        }
+
+        public void ExecuteRemoveSelectedSongsFromDatabaseCommand()
+        {
+            Repository.RemoveSongs(SelectedExistedSongs);
+        }
+
+        public bool CanExecuteRemoveSelectedSongsFromDatabaseCommand()
+        {
+            if (SelectedExistedSongs == null || SelectedExistedSongs.Count < 1)
+                return false;
+            return true;
+        }
+        #endregion
+
+        #region RemoveSongsCommand
         RelayCommand _removeSongsFromDatabaseCommand;
         public ICommand RemoveSongsFromDatabaseCommand
         {
@@ -95,12 +134,12 @@ namespace Mp3_Database.ViewModel
 
         public void ExecuteRemoveSongsFromDatabaseCommand()
         {
-            Repository.RemoveSongs(SelectedExistedSongs);
+            Repository.RemoveSongs(NewSongsList);
         }
 
         public bool CanExecuteRemoveSongsFromDatabaseCommand()
         {
-            if (SelectedExistedSongs == null || SelectedExistedSongs.Count < 1)
+            if (NewSongsList.Count < 1)
                 return false;
             return true;
         }
@@ -132,18 +171,20 @@ namespace Mp3_Database.ViewModel
                 outputDir = "MP3_Output";
             }
 
-
-
-
+            List<Song> newSongs = new List<Song>();
             foreach (Song song in NewSongsList)
             {
-                if (ExistingSongs.Count(sng => sng.Artist == song.Artist & sng.Title == song.Title) == 0)
-                {
-                    CopyNewSongsToOutputFolder(song, outputDir);
-                    Repository.AddSong(song);
-                    song.ExistEarlier = true;
-                }
+                if (ExistingSongs.Count(eSong => eSong.Artist == song.Artist & eSong.Title == song.Title) == 0)
+                    newSongs.Add(song);
             }
+
+            foreach (var song in newSongs)
+            {
+                CopyNewSongsToOutputFolder(song, outputDir);
+                song.ExistEarlier = true;
+            }
+
+            Repository.AddSongs(newSongs);
 
             if (Directory.Exists($".\\{outputDir}"))
             {
@@ -353,7 +394,7 @@ namespace Mp3_Database.ViewModel
             }
             return songs;
         }
-   
+
         private static void Logging(Exception e)
         {
             string filePath;
@@ -362,11 +403,7 @@ namespace Mp3_Database.ViewModel
             File.AppendAllText("log.txt", sb.ToString());
             sb.Clear();
         }
-        
+
         #endregion
-
-
-
-
     }
 }

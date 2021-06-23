@@ -39,13 +39,12 @@ namespace Mp3_Database.Model
             if (sList.Count != 0)
             {
                 DbContext.Songs.RemoveRange(sList);
-                DbContext.SaveChanges();
 
                 foreach (var song in songsList)
                     song.ExistEarlier = false;
             }
 
-
+            DbContext.SaveChanges();
         }
     }
 }

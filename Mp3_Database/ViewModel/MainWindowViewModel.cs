@@ -1,42 +1,38 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.CommandWpf;
+
 using Id3;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.Input;
 using Mp3_Database.Model;
-using Mp3_Database.View;
 
 namespace Mp3_Database.ViewModel
 {
 
-    public class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
+    public class MainWindowViewModel : ObservableObject, INotifyPropertyChanged
     {
-        public void MainViewModel()
+        public MainWindowViewModel()
         {
+            RemoveSelectedSongsFromDatabaseCommand = new RelayCommand(ExecuteRemoveSelectedSongsFromDatabaseCommand, CanExecuteRemoveSelectedSongsFromDatabaseCommand);
+            RemoveeNewSongsFromDatabaseCommand = new RelayCommand(ExecuteRemoveSongsFromDatabaseCommand, CanExecuteRemoveSongsFromDatabaseCommand);
+            OnlyAddToDatabaseCommand = new RelayCommand(ExecuteOnlyAddToDatabaseCommand, CanExecuteOnlyAddToDatabaseCommand);
+            CopyNewSongsCommand = new RelayCommand(ExecuteCopyNewSongsCommand, CanExecuteCopyNewSongsCommand);
+           
+            DropNewSongsCommand = new RelayCommand<DragEventArgs>(Drop);
 
+            ExistingSongs = new ObservableCollection<Song>(Repository.GetAllSongs());
         }
 
-        public ObservableCollection<Song> ExistingSongs
-        {
-            get
-            {
-                return new ObservableCollection<Song>(Repository.GetAllSongs());
-            }
-        }
+        public ObservableCollection<Song> ExistingSongs { get; }
 
         public List<Song> SelectedExistedSongs { get; set; } = new List<Song>();
 
@@ -45,15 +41,19 @@ namespace Mp3_Database.ViewModel
         public ObservableCollection<Song> NewSongsList
         {
             get { return _newSongsList; }
-            set { 
-                _newSongsList = value; 
-                _removeSongsFromDatabaseCommand.RaiseCanExecuteChanged();
-                _onlyAddToDatabaseSongsCommand.RaiseCanExecuteChanged();
-                _copyNewSongsCommand.RaiseCanExecuteChanged();
+            set
+            {
+                _newSongsList = value;
+                NewSongCanExecuteEventsRise();
             }
         }
 
-
+        private void NewSongCanExecuteEventsRise()
+        {
+            (RemoveeNewSongsFromDatabaseCommand as RelayCommand).NotifyCanExecuteChanged();
+            (OnlyAddToDatabaseCommand as RelayCommand).NotifyCanExecuteChanged();
+            (CopyNewSongsCommand as RelayCommand).NotifyCanExecuteChanged();
+        }
 
         public bool OneDirectoryDroped { get; set; } = false;
 
@@ -87,31 +87,17 @@ namespace Mp3_Database.ViewModel
             }
         }
 
-        public new event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged(String propertyName)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
 
-
-        #region RemoveSelectedSongsCommand
-        RelayCommand _removeSelectedSongsFromDatabaseCommand;
-        public ICommand RemoveSelectedSongsFromDatabaseCommand
-        {
-            get
-            {
-                if (_removeSelectedSongsFromDatabaseCommand == null)
-                    _removeSelectedSongsFromDatabaseCommand = new RelayCommand(ExecuteRemoveSelectedSongsFromDatabaseCommand, CanExecuteRemoveSelectedSongsFromDatabaseCommand);
-                return _removeSelectedSongsFromDatabaseCommand;
-            }
-        }
+        #region Удалить выделенные существующие песни из бызы
+        public ICommand RemoveSelectedSongsFromDatabaseCommand { get; }
 
         public void ExecuteRemoveSelectedSongsFromDatabaseCommand()
         {
             Repository.RemoveSongs(SelectedExistedSongs);
-        }
+            foreach (var item in SelectedExistedSongs)
+                ExistingSongs.Remove(item);
 
+        }
         public bool CanExecuteRemoveSelectedSongsFromDatabaseCommand()
         {
             if (SelectedExistedSongs == null || SelectedExistedSongs.Count < 1)
@@ -120,21 +106,14 @@ namespace Mp3_Database.ViewModel
         }
         #endregion
 
-        #region RemoveSongsCommand
-        RelayCommand _removeSongsFromDatabaseCommand;
-        public ICommand RemoveSongsFromDatabaseCommand
-        {
-            get
-            {
-                if (_removeSongsFromDatabaseCommand == null)
-                    _removeSongsFromDatabaseCommand = new RelayCommand(ExecuteRemoveSongsFromDatabaseCommand, CanExecuteRemoveSongsFromDatabaseCommand);
-                return _removeSongsFromDatabaseCommand;
-            }
-        }
-
+       
+        #region Удалить песни в списке вновь добавляемые из бызы
+        public ICommand RemoveeNewSongsFromDatabaseCommand { get; }
         public void ExecuteRemoveSongsFromDatabaseCommand()
         {
             Repository.RemoveSongs(NewSongsList);
+            NewSongsList.Clear();
+            NewSongCanExecuteEventsRise();
         }
 
         public bool CanExecuteRemoveSongsFromDatabaseCommand()
@@ -146,17 +125,7 @@ namespace Mp3_Database.ViewModel
         #endregion
 
         #region CopyNewSongsComand
-        RelayCommand _copyNewSongsCommand;
-        public ICommand CopyNewSongsCommand
-        {
-            get
-            {
-                if (_copyNewSongsCommand == null)
-                    _copyNewSongsCommand = new RelayCommand(ExecuteCopyNewSongsCommand, CanExecuteCopyNewSongsCommand);
-                return _copyNewSongsCommand;
-            }
-        }
-
+        public ICommand CopyNewSongsCommand { get; }
         public void ExecuteCopyNewSongsCommand()
         {
             if (NewSongsList.Count == 0) return;
@@ -222,17 +191,7 @@ namespace Mp3_Database.ViewModel
         #endregion
 
         #region AddToDatabaseComand
-        RelayCommand _onlyAddToDatabaseSongsCommand;
-        public ICommand OnlyAddToDatabaseCommand
-        {
-            get
-            {
-                if (_onlyAddToDatabaseSongsCommand == null)
-                    _onlyAddToDatabaseSongsCommand = new RelayCommand(ExecuteOnlyAddToDatabaseCommand, CanExecuteOnlyAddToDatabaseCommand);
-                return _onlyAddToDatabaseSongsCommand;
-            }
-        }
-
+        public ICommand OnlyAddToDatabaseCommand { get; }
         public void ExecuteOnlyAddToDatabaseCommand()
         {
             Repository.AddSongs(NewSongsList.Where(x => x.ExistEarlier == false));
@@ -252,15 +211,7 @@ namespace Mp3_Database.ViewModel
         #endregion
 
         #region DropCommand
-        private RelayCommand<DragEventArgs> _dropNewSongsCommand;
-        public RelayCommand<DragEventArgs> DropNewSongsCommand
-        {
-            get
-            {
-                return _dropNewSongsCommand ?? (_dropNewSongsCommand = new RelayCommand<DragEventArgs>(Drop));
-            }
-        }
-
+        public RelayCommand<DragEventArgs> DropNewSongsCommand { get; }
         private void Drop(DragEventArgs e)
         {
 
@@ -287,6 +238,7 @@ namespace Mp3_Database.ViewModel
                 NewSongsList.Add(song);
             }
             UpdateDuplicateSongCounter();
+            NewSongCanExecuteEventsRise();
         }
 
         private void UpdateDuplicateSongCounter()
@@ -397,7 +349,6 @@ namespace Mp3_Database.ViewModel
 
         private static void Logging(Exception e)
         {
-            string filePath;
             StringBuilder sb = new StringBuilder();
             sb.Append(e.ToString());
             File.AppendAllText("log.txt", sb.ToString());

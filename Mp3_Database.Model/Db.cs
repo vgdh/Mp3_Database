@@ -12,6 +12,12 @@ namespace Mp3_Database.Model
     public class Db : DbContext
     {
         public string DatabasePath { get; }
+        public Db()
+        {
+            DatabasePath = "./database.sqlite";
+            Database.EnsureCreated();
+        }       
+        
         public Db(string dbName)
         {
             DatabasePath = dbName;

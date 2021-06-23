@@ -4,90 +4,26 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using Microsoft.Toolkit.Mvvm.Input;
 using Mp3_Database.Model;
 using Mp3_Database.ViewModel;
 
 namespace Mp3_Database.View
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
 
+        private static MainWindowViewModel vm = new();
         public MainWindow()
         {
+            DataContext = vm;
             InitializeComponent();
+
             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(ListViewExistingSongs.ItemsSource);
             view.SortDescriptions.Add(new SortDescription("Artist", ListSortDirection.Ascending));
             view.SortDescriptions.Add(new SortDescription("Title", ListSortDirection.Ascending));
 
         }
-
-
-
-       
-
-        //private void Button_Click_CopySongs(object sender, RoutedEventArgs e)
-        //{
-        //    if (ListViewNewSongs.ItemsSource != null)
-        //    {
-        //        foreach (Song song in ListViewNewSongs.ItemsSource)
-        //        {
-        //            if (Repository.Songs.Count(x => x.Title == song.Title & x.Artist == song.Artist) == 0)
-        //            {
-        //                CopyNewSongsToOutputFolder(song);
-        //                Repository.Songs.Add(song);
-        //            }
-        //        }
-        //        Repository.SaveChanges();
-        //    }
-        //    Process.Start(@".\\MP3_Output\\");
-        //}
-
-        //private void CopyNewSongsToOutputFolder(Song song)
-        //{
-        //    if (!Directory.Exists(".\\MP3_Output"))
-        //    {
-        //        Directory.CreateDirectory(".\\MP3_Output");
-        //    }
-
-        //    string fileName = $"{song.Artist} - {song.Title}.mp3";
-
-        //    string regexSearch = new string(System.IO.Path.GetInvalidFileNameChars());
-        //    Regex r = new Regex($"[{Regex.Escape(regexSearch)}]");
-        //    fileName = r.Replace(fileName, "");
-
-        //    File.Copy(song.FilePath, $".\\MP3_Output\\{fileName}", overwrite: true);
-        //}
-
-        //private void Button_Click_RemoveSongFromDatabase(object sender, RoutedEventArgs e)
-        //{
-        //    var songs = ListViewExistingSongs.SelectedItems.Cast<Song>().ToList();
-        //    if (songs.Count > 0)
-        //    {
-        //        Repository.Songs.RemoveRange(songs);
-        //        Repository.SaveChanges();
-        //    }
-
-        //}
-
-        //private void Button_Click_AddSongsToDatabase(object sender, RoutedEventArgs e)
-        //{
-        //    if (ListViewNewSongs.ItemsSource != null)
-        //    {
-        //        foreach (Song song in ListViewNewSongs.ItemsSource)
-        //        {
-        //            if (Repository.Songs.Count(x => x.Title == song.Title & x.Artist == song.Artist) == 0)
-        //            {
-        //                Repository.Songs.Add(song);
-        //            }
-        //        }
-        //        Repository.SaveChanges();
-        //    }
-
-        //    MessageBox.Show("Дреки добалены в базу данных");
-        //}
 
 
         #region Сортировка по клику на столбец
@@ -159,10 +95,15 @@ namespace Mp3_Database.View
 
         private void ListViewExistingSongs_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ListView listView = (ListView)sender;
-            ((MainWindowViewModel)(((Grid)listView.Parent).DataContext)).SelectedExistedSongs =
-                ListViewExistingSongs.SelectedItems.Cast<Song>().ToList();
+            vm.SelectedExistedSongs = ListViewExistingSongs.SelectedItems.Cast<Song>().ToList();
+            (vm.RemoveSelectedSongsFromDatabaseCommand as RelayCommand).NotifyCanExecuteChanged();
+        }
 
+        private void ListViewNewSongs_Drop(object sender, DragEventArgs e)
+        {
+            vm.DropNewSongsCommand.Execute(e);
+            var g = (vm.RemoveeNewSongsFromDatabaseCommand as RelayCommand);
+            (vm.RemoveeNewSongsFromDatabaseCommand as RelayCommand).NotifyCanExecuteChanged();
         }
     }
 

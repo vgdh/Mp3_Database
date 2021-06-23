@@ -3,16 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Mp3_Database.ViewModel"
-        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-        xmlns:command="http://www.galasoft.ch/mvvmlight"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:viewmodel="clr-namespace:Mp3_Database.ViewModel"
+        d:DataContext="{d:DesignInstance Type=viewmodel:MainWindowViewModel}"
         mc:Ignorable="d"
         Title="Мои прослушанные треки MP3" Height="600" Width="1500">
-    <!--DataContext="{Binding  Source={StaticResource ResourceKey=Locator}, Path=Main }"-->
-
-    <Window.DataContext>
-        <local:MainWindowViewModel></local:MainWindowViewModel>
-    </Window.DataContext>
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -33,13 +27,6 @@
                   ItemsSource="{Binding Path=ExistingSongs}"
                   GridViewColumnHeader.Click="GridViewColumnHeaderClickedHandler"
                   SelectionChanged="ListViewExistingSongs_OnSelectionChanged">
-            <!--<i:Interaction.Triggers>
-                <i:EventTrigger EventName="SelectionChanged">
-                    <command:EventToCommand
-                        Command="{Binding SelectionChangedCommand}"
-                        CommandParameter="{Binding SelectedItems, ElementName=ListViewExistingSongs}" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>-->
 
             <ListView.View>
                 <GridView>
@@ -66,14 +53,11 @@
             </Button>
         </Grid>
 
-        <ListView Name="ListViewNewSongs" Grid.Column="1" Grid.Row="1" AllowDrop="True" ItemsSource="{Binding Path=NewSongsList}">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="Drop">
-                    <command:EventToCommand
-                        Command="{Binding DropNewSongsCommand}"
-                        PassEventArgsToCommand="True"/>
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
+        <ListView Name="ListViewNewSongs" 
+                  Grid.Column="1" Grid.Row="1" 
+                  AllowDrop="True" 
+                  Drop="ListViewNewSongs_Drop"
+                  ItemsSource="{Binding Path=NewSongsList}">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Width="300" DisplayMemberBinding="{Binding Path=Artist}">Исполнитель</GridViewColumn>
@@ -129,7 +113,7 @@
             </Button>
 
             <Button Grid.Column="2" 
-                    Command="{Binding RemoveSongsFromDatabaseCommand}">
+                    Command="{Binding RemoveeNewSongsFromDatabaseCommand}">
                 <TextBlock TextWrapping="Wrap">Удалить из базы</TextBlock>
 
             </Button>

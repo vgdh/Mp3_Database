@@ -1,0 +1,121 @@
+2021-06-23 21:00:07.872 +05:00 [INF] Loaded 2 extensions
+2021-06-23 21:00:08.043 +05:00 [INF] MSBuild registered from C:\Program Files\dotnet\sdk\5.0.301\
+2021-06-23 21:00:09.620 +05:00 [INF] Initializing upgrade step Select an entrypoint
+2021-06-23 21:00:18.995 +05:00 [INF] Applying upgrade step Select an entrypoint
+2021-06-23 21:00:22.083 +05:00 [INF] Upgrade step Select an entrypoint applied successfully
+2021-06-23 21:00:23.027 +05:00 [INF] Initializing upgrade step Select project to upgrade
+2021-06-23 21:00:25.018 +05:00 [INF] Applying upgrade step Select project to upgrade
+2021-06-23 21:00:30.234 +05:00 [INF] Upgrade step Select project to upgrade applied successfully
+2021-06-23 21:00:31.074 +05:00 [INF] Initializing upgrade step Back up project
+2021-06-23 21:00:32.122 +05:00 [INF] Applying upgrade step Back up project
+2021-06-23 21:00:33.148 +05:00 [INF] Backing up E:\GIT\C_Sharp\Mp3_Database\Mp3_Database.Model to E:\GIT\C_Sharp\Mp3_Database.backup\Mp3_Database.Model
+2021-06-23 21:00:35.531 +05:00 [INF] Project backed up to E:\GIT\C_Sharp\Mp3_Database.backup\Mp3_Database.Model
+2021-06-23 21:00:35.533 +05:00 [INF] Upgrade step Back up project applied successfully
+2021-06-23 21:00:36.442 +05:00 [INF] Initializing upgrade step Convert project file to SDK style
+2021-06-23 21:00:37.442 +05:00 [INF] Applying upgrade step Convert project file to SDK style
+2021-06-23 21:00:37.444 +05:00 [INF] Converting project file format with try-convert, version 0.7.226301
+2021-06-23 21:00:37.698 +05:00 [INF] [dotnet] E:\GIT\C_Sharp\Mp3_Database\Mp3_Database.Model\Mp3_Database.Model.csproj contains an App.config file. App.config is replaced by appsettings.json in .NET Core. You will need to delete App.config and migrate to appsettings.json if it's applicable to your project.
+2021-06-23 21:00:38.151 +05:00 [INF] [dotnet] This project has an unrecognized custom import which may need reviewed after conversion: EntityFramework.props
+2021-06-23 21:00:38.152 +05:00 [INF] [dotnet] This project has an unrecognized custom import which may need reviewed after conversion: EntityFramework.targets
+2021-06-23 21:00:38.153 +05:00 [INF] [dotnet] This project has an unrecognized custom import which may need reviewed after conversion: System.Data.SQLite.Core.targets
+2021-06-23 21:00:41.225 +05:00 [INF] [dotnet] Conversion complete!
+2021-06-23 21:00:41.491 +05:00 [INF] Project file converted successfully! The project may require additional changes to build successfully against the new .NET target.
+2021-06-23 21:00:43.316 +05:00 [INF] Upgrade step Convert project file to SDK style applied successfully
+2021-06-23 21:00:44.842 +05:00 [INF] Initializing upgrade step Clean up NuGet package references
+2021-06-23 21:00:45.882 +05:00 [INF] Marking package EntityFramework for removal because it appears to be a transitive dependency
+2021-06-23 21:00:45.886 +05:00 [INF] Marking package System.Data.SQLite.Core for removal because it appears to be a transitive dependency
+2021-06-23 21:00:45.887 +05:00 [INF] Marking package System.Data.SQLite.EF6 for removal because it appears to be a transitive dependency
+2021-06-23 21:00:45.889 +05:00 [INF] Marking package System.Data.SQLite.Linq for removal because it appears to be a transitive dependency
+2021-06-23 21:00:47.703 +05:00 [WRN] .NET Upgrade Assistant analyzer NuGet package reference cannot be added because the package cannot be found
+2021-06-23 21:00:47.711 +05:00 [INF] Packages to be removed: EntityFramework, Version=6.3.0
+System.Data.SQLite.Core, Version=1.0.112.0
+System.Data.SQLite.EF6, Version=1.0.112.0
+System.Data.SQLite.Linq, Version=1.0.112.0
+2021-06-23 21:00:48.994 +05:00 [INF] Applying upgrade step Clean up NuGet package references
+2021-06-23 21:00:48.997 +05:00 [INF] Removing outdated package reference: EntityFramework, Version=6.3.0
+2021-06-23 21:00:48.999 +05:00 [INF] Removing outdated package reference: System.Data.SQLite.Core, Version=1.0.112.0
+2021-06-23 21:00:49.000 +05:00 [INF] Removing outdated package reference: System.Data.SQLite.EF6, Version=1.0.112.0
+2021-06-23 21:00:49.000 +05:00 [INF] Removing outdated package reference: System.Data.SQLite.Linq, Version=1.0.112.0
+2021-06-23 21:00:50.391 +05:00 [WRN] .NET Upgrade Assistant analyzer NuGet package reference cannot be added because the package cannot be found
+2021-06-23 21:00:50.392 +05:00 [INF] Upgrade step Clean up NuGet package references applied successfully
+2021-06-23 21:00:51.962 +05:00 [INF] Initializing upgrade step Update TFM
+2021-06-23 21:00:51.968 +05:00 [INF] TFM needs updated to netstandard2.0
+2021-06-23 21:00:52.754 +05:00 [INF] Applying upgrade step Update TFM
+2021-06-23 21:00:54.080 +05:00 [INF] Updated TFM to netstandard2.0
+2021-06-23 21:00:54.087 +05:00 [INF] Upgrade step Update TFM applied successfully
+2021-06-23 21:00:56.938 +05:00 [INF] Initializing upgrade step Update NuGet Packages
+2021-06-23 21:00:57.936 +05:00 [WRN] .NET Upgrade Assistant analyzer NuGet package reference cannot be added because the package cannot be found
+2021-06-23 21:00:57.937 +05:00 [INF] No package updates needed
+2021-06-23 21:00:57.938 +05:00 [INF] Initializing upgrade step Add template files
+2021-06-23 21:00:57.943 +05:00 [INF] 0 expected template items needed
+2021-06-23 21:00:57.944 +05:00 [INF] Initializing upgrade step Upgrade app config files
+2021-06-23 21:00:57.955 +05:00 [INF] Found 0 app settings for upgrade: 
+2021-06-23 21:00:57.957 +05:00 [INF] Found 0 connection strings for upgrade: 
+2021-06-23 21:00:57.961 +05:00 [INF] Initializing upgrade step Update source code
+2021-06-23 21:00:58.945 +05:00 [INF] Initializing upgrade step Move to next project
+2021-06-23 21:00:59.755 +05:00 [INF] Applying upgrade step Move to next project
+2021-06-23 21:00:59.756 +05:00 [INF] Upgrade step Move to next project applied successfully
+2021-06-23 21:01:00.499 +05:00 [INF] Initializing upgrade step Select project to upgrade
+2021-06-23 21:01:01.378 +05:00 [INF] Applying upgrade step Select project to upgrade
+2021-06-23 21:01:03.330 +05:00 [INF] Upgrade step Select project to upgrade applied successfully
+2021-06-23 21:01:04.019 +05:00 [INF] Initializing upgrade step Back up project
+2021-06-23 21:01:05.298 +05:00 [INF] Applying upgrade step Back up project
+2021-06-23 21:01:06.218 +05:00 [INF] Backing up E:\GIT\C_Sharp\Mp3_Database\Mp3_Database to E:\GIT\C_Sharp\Mp3_Database.backup\Mp3_Database
+2021-06-23 21:01:13.817 +05:00 [INF] Project backed up to E:\GIT\C_Sharp\Mp3_Database.backup\Mp3_Database
+2021-06-23 21:01:13.818 +05:00 [INF] Upgrade step Back up project applied successfully
+2021-06-23 21:01:15.682 +05:00 [INF] Initializing upgrade step Convert project file to SDK style
+2021-06-23 21:01:16.386 +05:00 [INF] Applying upgrade step Convert project file to SDK style
+2021-06-23 21:01:16.387 +05:00 [INF] Converting project file format with try-convert, version 0.7.226301
+2021-06-23 21:01:16.639 +05:00 [INF] [dotnet] E:\GIT\C_Sharp\Mp3_Database\Mp3_Database\Mp3_Database.csproj contains an App.config file. App.config is replaced by appsettings.json in .NET Core. You will need to delete App.config and migrate to appsettings.json if it's applicable to your project.
+2021-06-23 21:01:19.876 +05:00 [INF] [dotnet] Conversion complete!
+2021-06-23 21:01:20.092 +05:00 [INF] Project file converted successfully! The project may require additional changes to build successfully against the new .NET target.
+2021-06-23 21:01:21.253 +05:00 [INF] Upgrade step Convert project file to SDK style applied successfully
+2021-06-23 21:01:22.634 +05:00 [INF] Initializing upgrade step Clean up NuGet package references
+2021-06-23 21:01:23.861 +05:00 [INF] Marking package MvvmLightLibs for removal because it appears to be a transitive dependency
+2021-06-23 21:01:23.884 +05:00 [WRN] .NET Upgrade Assistant analyzer NuGet package reference cannot be added because the package cannot be found
+2021-06-23 21:01:23.885 +05:00 [INF] Packages to be removed: MvvmLightLibs, Version=5.4.1.1
+2021-06-23 21:01:24.746 +05:00 [INF] Applying upgrade step Clean up NuGet package references
+2021-06-23 21:01:24.747 +05:00 [INF] Removing outdated package reference: MvvmLightLibs, Version=5.4.1.1
+2021-06-23 21:01:26.153 +05:00 [WRN] .NET Upgrade Assistant analyzer NuGet package reference cannot be added because the package cannot be found
+2021-06-23 21:01:26.154 +05:00 [INF] Upgrade step Clean up NuGet package references applied successfully
+2021-06-23 21:01:28.458 +05:00 [INF] Initializing upgrade step Update TFM
+2021-06-23 21:01:28.507 +05:00 [INF] TFM needs updated to net5.0-windows
+2021-06-23 21:01:29.274 +05:00 [INF] Applying upgrade step Update TFM
+2021-06-23 21:01:30.983 +05:00 [INF] Updated TFM to net5.0-windows
+2021-06-23 21:01:30.984 +05:00 [INF] Upgrade step Update TFM applied successfully
+2021-06-23 21:01:31.970 +05:00 [INF] Initializing upgrade step Update NuGet Packages
+2021-06-23 21:01:33.154 +05:00 [INF] Marking package Microsoft.CSharp for removal because it appears to be a transitive dependency
+2021-06-23 21:01:33.156 +05:00 [INF] Marking package System.ComponentModel.Annotations for removal because it appears to be a transitive dependency
+2021-06-23 21:01:33.207 +05:00 [INF] Marking package System.Data.DataSetExtensions for removal because it appears to be a transitive dependency
+2021-06-23 21:01:33.402 +05:00 [WRN] No version of MvvmLight found that supports ["net5.0-windows"]; leaving unchanged
+2021-06-23 21:01:33.409 +05:00 [WRN] .NET Upgrade Assistant analyzer NuGet package reference cannot be added because the package cannot be found
+2021-06-23 21:01:34.266 +05:00 [INF] Adding Microsoft.Windows.Compatibility 5.0.2
+2021-06-23 21:01:34.268 +05:00 [INF] Packages to be removed: Microsoft.CSharp, Version=4.7.0
+System.ComponentModel.Annotations, Version=5.0.0
+System.Data.DataSetExtensions, Version=4.5.0
+2021-06-23 21:01:34.269 +05:00 [INF] Packages to be added: Microsoft.Windows.Compatibility, Version=5.0.2
+2021-06-23 21:01:35.386 +05:00 [INF] Applying upgrade step Update NuGet Packages
+2021-06-23 21:01:35.387 +05:00 [INF] Removing outdated package reference: Microsoft.CSharp, Version=4.7.0
+2021-06-23 21:01:35.388 +05:00 [INF] Removing outdated package reference: System.ComponentModel.Annotations, Version=5.0.0
+2021-06-23 21:01:35.388 +05:00 [INF] Removing outdated package reference: System.Data.DataSetExtensions, Version=4.5.0
+2021-06-23 21:01:35.390 +05:00 [INF] Adding package reference: Microsoft.Windows.Compatibility, Version=5.0.2
+2021-06-23 21:01:37.208 +05:00 [WRN] No version of MvvmLight found that supports ["net5.0-windows"]; leaving unchanged
+2021-06-23 21:01:37.211 +05:00 [WRN] .NET Upgrade Assistant analyzer NuGet package reference cannot be added because the package cannot be found
+2021-06-23 21:01:37.292 +05:00 [INF] Upgrade step Update NuGet Packages applied successfully
+2021-06-23 21:01:40.098 +05:00 [INF] Initializing upgrade step Add template files
+2021-06-23 21:01:40.099 +05:00 [INF] 0 expected template items needed
+2021-06-23 21:01:40.100 +05:00 [INF] Initializing upgrade step Upgrade app config files
+2021-06-23 21:01:40.106 +05:00 [INF] Found 0 app settings for upgrade: 
+2021-06-23 21:01:40.108 +05:00 [INF] Found 1 connection strings for upgrade: mainEntities
+2021-06-23 21:01:41.155 +05:00 [INF] Applying upgrade step Convert Connection Strings
+2021-06-23 21:01:41.496 +05:00 [INF] Upgrade step Convert Connection Strings applied successfully
+2021-06-23 21:01:41.497 +05:00 [INF] Applying upgrade step Upgrade app config files
+2021-06-23 21:01:41.499 +05:00 [INF] Upgrade step Upgrade app config files applied successfully
+2021-06-23 21:01:45.015 +05:00 [INF] Initializing upgrade step Update source code
+2021-06-23 21:01:45.425 +05:00 [INF] Initializing upgrade step Move to next project
+2021-06-23 21:01:46.514 +05:00 [INF] Applying upgrade step Move to next project
+2021-06-23 21:01:46.514 +05:00 [INF] Upgrade step Move to next project applied successfully
+2021-06-23 21:01:47.224 +05:00 [INF] Initializing upgrade step Finalize upgrade
+2021-06-23 21:01:48.059 +05:00 [INF] Applying upgrade step Finalize upgrade
+2021-06-23 21:01:48.060 +05:00 [INF] Upgrade step Finalize upgrade applied successfully
+2021-06-23 21:01:51.034 +05:00 [INF] Upgrade has completed. Please review any changes.

@@ -33,13 +33,13 @@
                   ItemsSource="{Binding Path=ExistingSongs}"
                   GridViewColumnHeader.Click="GridViewColumnHeaderClickedHandler"
                   SelectionChanged="ListViewExistingSongs_OnSelectionChanged">
-            <i:Interaction.Triggers>
+            <!--<i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectionChanged">
                     <command:EventToCommand
                         Command="{Binding SelectionChangedCommand}"
                         CommandParameter="{Binding SelectedItems, ElementName=ListViewExistingSongs}" />
                 </i:EventTrigger>
-            </i:Interaction.Triggers>
+            </i:Interaction.Triggers>-->
 
             <ListView.View>
                 <GridView>

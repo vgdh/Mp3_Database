@@ -34,7 +34,7 @@ namespace Mp3_Database.ViewModel
         {
             get
             {
-                return Repository.GetAllSongs();
+                return new ObservableCollection<Song>(Repository.GetAllSongs());
             }
         }
 

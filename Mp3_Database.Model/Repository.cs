@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data.Entity;
 using System.Linq;
 
 namespace Mp3_Database.Model
@@ -8,24 +7,23 @@ namespace Mp3_Database.Model
 
     public static class Repository
     {
-        private static readonly mainEntities Db = new mainEntities();
+        private static readonly Db DbContext = new Db("./database.sqlite");
 
-        public static ObservableCollection<Song> GetAllSongs()
+        public static List<Song> GetAllSongs()
         {
-            Db.Songs.Load();
-            return Db.Songs.Local;
+            return DbContext.Songs.ToList();
         }
 
         public static void AddSongs(IEnumerable<Song> songsList)
         {
-            Db.Songs.AddRange(songsList);
-            Db.SaveChanges();
+            DbContext.Songs.AddRange(songsList);
+            DbContext.SaveChanges();
         }
 
         public static void AddSong(Song song)
         {
-            Db.Songs.Add(song);
-            Db.SaveChanges();
+            DbContext.Songs.Add(song);
+            DbContext.SaveChanges();
         }
 
         public static void RemoveSongs(IEnumerable<Song> songsList)
@@ -33,15 +31,15 @@ namespace Mp3_Database.Model
             List<Song> sList = new List<Song>();
             foreach (var song in songsList)
             {
-                var foundSong = Db.Songs.FirstOrDefault(x => x.Artist == song.Artist && x.Title == song.Title);
+                var foundSong = DbContext.Songs.FirstOrDefault(x => x.Artist == song.Artist && x.Title == song.Title);
                 if (foundSong != null)
                     sList.Add(foundSong);
             }
 
             if (sList.Count != 0)
             {
-                Db.Songs.RemoveRange(sList);
-                Db.SaveChanges();
+                DbContext.Songs.RemoveRange(sList);
+                DbContext.SaveChanges();
 
                 foreach (var song in songsList)
                     song.ExistEarlier = false;

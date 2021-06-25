@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -22,19 +23,17 @@ namespace Mp3_Database.ViewModel
     {
         public MainWindowViewModel()
         {
-            RemoveSelectedSongsFromDatabaseCommand = new RelayCommand(ExecuteRemoveSelectedSongsFromDatabaseCommand, CanExecuteRemoveSelectedSongsFromDatabaseCommand);
+            RemoveSelectedSongsFromDatabaseCommand = new RelayCommand<object>(ExecuteRemoveSelectedSongsFromDatabaseCommand, CanExecuteRemoveSelectedSongsFromDatabaseCommand);
             RemoveeNewSongsFromDatabaseCommand = new RelayCommand(ExecuteRemoveSongsFromDatabaseCommand, CanExecuteRemoveSongsFromDatabaseCommand);
             OnlyAddToDatabaseCommand = new RelayCommand(ExecuteOnlyAddToDatabaseCommand, CanExecuteOnlyAddToDatabaseCommand);
             CopyNewSongsCommand = new RelayCommand(ExecuteCopyNewSongsCommand, CanExecuteCopyNewSongsCommand);
-           
+
             DropNewSongsCommand = new RelayCommand<DragEventArgs>(Drop);
 
             ExistingSongs = new ObservableCollection<Song>(Repository.GetAllSongs());
         }
 
         public ObservableCollection<Song> ExistingSongs { get; }
-
-        public List<Song> SelectedExistedSongs { get; set; } = new List<Song>();
 
 
         public ObservableCollection<Song> _newSongsList = new ObservableCollection<Song>();
@@ -91,22 +90,26 @@ namespace Mp3_Database.ViewModel
         #region Удалить выделенные существующие песни из бызы
         public ICommand RemoveSelectedSongsFromDatabaseCommand { get; }
 
-        public void ExecuteRemoveSelectedSongsFromDatabaseCommand()
+        public void ExecuteRemoveSelectedSongsFromDatabaseCommand(object _songs)
         {
-            Repository.RemoveSongs(SelectedExistedSongs);
-            foreach (var item in SelectedExistedSongs)
+            var items = (IList)_songs;
+            var songs = items?.Cast<Song>().ToList();
+            Repository.RemoveSongs(songs);
+            foreach (var item in songs)
                 ExistingSongs.Remove(item);
 
         }
-        public bool CanExecuteRemoveSelectedSongsFromDatabaseCommand()
+        public bool CanExecuteRemoveSelectedSongsFromDatabaseCommand(object _songs)
         {
-            if (SelectedExistedSongs == null || SelectedExistedSongs.Count < 1)
+            var items = (IList)_songs;
+            var songs = items?.Cast<Song>().ToList();
+            if (songs == null || songs.Count() < 1)
                 return false;
             return true;
         }
         #endregion
 
-       
+
         #region Удалить песни в списке вновь добавляемые из бызы
         public ICommand RemoveeNewSongsFromDatabaseCommand { get; }
         public void ExecuteRemoveSongsFromDatabaseCommand()

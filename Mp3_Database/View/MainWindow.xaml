@@ -7,7 +7,7 @@
         d:DataContext="{d:DesignInstance Type=viewmodel:MainWindowViewModel}"
         mc:Ignorable="d"
         Title="Мои прослушанные треки MP3" Height="600" Width="1500">
-
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition></ColumnDefinition>
@@ -23,6 +23,7 @@
         <Label Grid.Column="0" HorizontalContentAlignment="Center" FontWeight="Bold" FontSize="18">Прослушанные треки</Label>
         <Label Grid.Column="1" HorizontalContentAlignment="Center" FontWeight="Bold" FontSize="18">Треки для обработки</Label>
 
+        
         <ListView Name="ListViewExistingSongs" Grid.Column="0" Grid.Row="1" 
                   ItemsSource="{Binding Path=ExistingSongs}"
                   GridViewColumnHeader.Click="GridViewColumnHeaderClickedHandler"
@@ -35,6 +36,7 @@
                     <GridViewColumn DisplayMemberBinding="{Binding Path=AddTimeDateTime, StringFormat='dd-MM-yyyy (HH:mm:ss)'}">Дата добавления трека</GridViewColumn>
                 </GridView>
             </ListView.View>
+            
         </ListView>
 
         <Grid Grid.Column="0" Grid.Row="2">
@@ -48,9 +50,11 @@
                 <Label Name="ExistingSongCount" Content="{Binding ElementName=ListViewExistingSongs, Path=Items.Count, Mode=OneWay}"></Label>
             </StackPanel>
 
-            <Button Grid.Column="2" Command="{Binding RemoveSelectedSongsFromDatabaseCommand}">
+            <Button Grid.Column="2" Command="{Binding RemoveSelectedSongsFromDatabaseCommand}" CommandParameter="{Binding SelectedItems, ElementName=ListViewExistingSongs}">
                 <TextBlock TextWrapping="Wrap">Удалить выделенные треки из базы</TextBlock>
             </Button>
+           
+
         </Grid>
 
         <ListView Name="ListViewNewSongs" 

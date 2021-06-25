@@ -27,7 +27,6 @@ namespace Mp3_Database.View
 
 
         #region Сортировка по клику на столбец
-
         GridViewColumnHeader _lastHeaderClicked = null;
         ListSortDirection _lastDirection = ListSortDirection.Ascending;
         void GridViewColumnHeaderClickedHandler(object sender, RoutedEventArgs e)
@@ -95,14 +94,12 @@ namespace Mp3_Database.View
 
         private void ListViewExistingSongs_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            vm.SelectedExistedSongs = ListViewExistingSongs.SelectedItems.Cast<Song>().ToList();
-            (vm.RemoveSelectedSongsFromDatabaseCommand as RelayCommand).NotifyCanExecuteChanged();
+            (vm.RemoveSelectedSongsFromDatabaseCommand as IRelayCommand).NotifyCanExecuteChanged();
         }
 
         private void ListViewNewSongs_Drop(object sender, DragEventArgs e)
         {
             vm.DropNewSongsCommand.Execute(e);
-            var g = (vm.RemoveeNewSongsFromDatabaseCommand as RelayCommand);
             (vm.RemoveeNewSongsFromDatabaseCommand as RelayCommand).NotifyCanExecuteChanged();
         }
     }

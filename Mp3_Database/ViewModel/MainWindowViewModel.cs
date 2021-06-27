@@ -26,6 +26,8 @@ namespace Mp3_Database.ViewModel
         public ObservableCollection<Song> NewSongsList { get; set; }
         public bool OneDirectoryDroped { get; set; } = false;
 
+        private const string standartOutputFolderName = "MP3_Output";
+
 
         public MainWindowViewModel()
         {
@@ -50,7 +52,6 @@ namespace Mp3_Database.ViewModel
             (CopyNewSongsCommand as RelayCommand).NotifyCanExecuteChanged();
 
         }
-
 
         private int _duplicateSongCount;
         public int DuplicateSongCount
@@ -114,6 +115,7 @@ namespace Mp3_Database.ViewModel
                 ExistingSongs.Remove(found);
             }
             NewSongsList.Clear();
+            UpdateDuplicateSongCounter();
         }
 
         public bool CanExecuteRemoveSongsFromDatabaseCommand()
@@ -133,11 +135,11 @@ namespace Mp3_Database.ViewModel
 
             if (OneDirectoryDroped)
             {
-                outputDir = OneDirectoryName;
+                outputDir = $"{standartOutputFolderName}\\{OneDirectoryName}";
             }
             else
             {
-                outputDir = "MP3_Output";
+                outputDir = standartOutputFolderName;
             }
 
             List<Song> newSongs = new List<Song>();
@@ -163,7 +165,7 @@ namespace Mp3_Database.ViewModel
             {
                 using (Process proc = new Process())
                 {
-                    proc.StartInfo.FileName = $".\\{outputDir}\\";
+                    proc.StartInfo.FileName = $".\\{standartOutputFolderName}\\";
                     proc.StartInfo.UseShellExecute = true;
                     proc.Start();
                 }
@@ -204,10 +206,13 @@ namespace Mp3_Database.ViewModel
         public ICommand OnlyAddToDatabaseCommand { get; }
         public void ExecuteOnlyAddToDatabaseCommand()
         {
-            Repository.AddSongs(NewSongsList.Where(x => x.ExistEarlier == false));
-            foreach (var song in NewSongsList)
+            var newSong = NewSongsList.Where(x => x.ExistEarlier == false);
+            Repository.AddSongs(newSong);
+            foreach (var item in newSong)
             {
-                song.ExistEarlier = true;
+                item.ExistEarlier = true;
+                ExistingSongs.Add(item);
+                DuplicateSongCount++;
             }
         }
 

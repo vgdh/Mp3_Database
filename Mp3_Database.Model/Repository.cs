@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Mp3_Database.Model
@@ -10,7 +11,7 @@ namespace Mp3_Database.Model
 
         public static List<Song> GetAllSongs()
         {
-            return DbContext.Songs.ToList();
+            return DbContext.Songs.AsNoTracking().ToList();
         }
 
         public static void AddSongs(IEnumerable<Song> songsList)
@@ -61,7 +62,8 @@ namespace Mp3_Database.Model
                 if (foundedSong != null)
                     removedSongs.Add(foundedSong);
             }
-            DbContext.RemoveRange(removedSongs);
+
+            DbContext.Songs.RemoveRange(removedSongs);
             DbContext.SaveChanges();
             return removedSongs;
         }

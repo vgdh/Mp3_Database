@@ -305,6 +305,10 @@ namespace Mp3_Database.ViewModel
             ObservableCollection<Song> songs = new ObservableCollection<Song>();
             foreach (var filePath in filesList)
             {
+                //var tfile = TagLib.File.Create(filePath);
+                //var Artist = tfile.Tag.Performers[0];
+                //var Title = tfile.Tag.Title;
+
                 using (var mp3 = new Mp3(filePath))
                 {
                     Id3Tag tag = null;

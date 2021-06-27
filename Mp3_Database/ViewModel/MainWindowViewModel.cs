@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -21,6 +22,11 @@ namespace Mp3_Database.ViewModel
 
     public class MainWindowViewModel : ObservableObject, INotifyPropertyChanged
     {
+        public ObservableCollection<Song> ExistingSongs { get; set; }
+        public ObservableCollection<Song> NewSongsList { get; set; }
+        public bool OneDirectoryDroped { get; set; } = false;
+
+
         public MainWindowViewModel()
         {
             RemoveSelectedSongsFromDatabaseCommand = new RelayCommand<object>(ExecuteRemoveSelectedSongsFromDatabaseCommand, CanExecuteRemoveSelectedSongsFromDatabaseCommand);
@@ -31,41 +37,31 @@ namespace Mp3_Database.ViewModel
             DropNewSongsCommand = new RelayCommand<DragEventArgs>(Drop);
 
             ExistingSongs = new ObservableCollection<Song>(Repository.GetAllSongs());
+            ExistingSongs.CollectionChanged += SongListsChangedEvent;
+
+            NewSongsList = new();
+            NewSongsList.CollectionChanged += SongListsChangedEvent;
         }
 
-        public ObservableCollection<Song> ExistingSongs { get; }
-
-
-        public ObservableCollection<Song> _newSongsList = new ObservableCollection<Song>();
-        public ObservableCollection<Song> NewSongsList
-        {
-            get { return _newSongsList; }
-            set
-            {
-                _newSongsList = value;
-                NewSongCanExecuteEventsRise();
-            }
-        }
-
-        private void NewSongCanExecuteEventsRise()
+        private void SongListsChangedEvent(object sender, EventArgs e)
         {
             (RemoveeNewSongsFromDatabaseCommand as RelayCommand).NotifyCanExecuteChanged();
             (OnlyAddToDatabaseCommand as RelayCommand).NotifyCanExecuteChanged();
             (CopyNewSongsCommand as RelayCommand).NotifyCanExecuteChanged();
+
         }
 
-        public bool OneDirectoryDroped { get; set; } = false;
 
         private int _duplicateSongCount;
         public int DuplicateSongCount
         {
-            get { return _duplicateSongCount; }
+            get => _duplicateSongCount;
             set
             {
                 if (_duplicateSongCount != value)
                 {
                     _duplicateSongCount = value;
-                    OnPropertyChanged(nameof(DuplicateSongCount));
+                    OnPropertyChanged();
                 }
             }
         }
@@ -80,8 +76,7 @@ namespace Mp3_Database.ViewModel
                 if (_oneDirectoryName != value)
                 {
                     _oneDirectoryName = value;
-                    OnPropertyChanged("OneDirectoryName");
-                    OnPropertyChanged(nameof(OneDirectoryName));
+                    OnPropertyChanged();
                 }
             }
         }
@@ -89,7 +84,6 @@ namespace Mp3_Database.ViewModel
 
         #region Удалить выделенные существующие песни из бызы
         public ICommand RemoveSelectedSongsFromDatabaseCommand { get; }
-
         public void ExecuteRemoveSelectedSongsFromDatabaseCommand(object _songs)
         {
             var items = (IList)_songs;
@@ -98,6 +92,7 @@ namespace Mp3_Database.ViewModel
             foreach (var item in songs)
                 ExistingSongs.Remove(item);
 
+            UpdateDuplicateSongCounter();
         }
         public bool CanExecuteRemoveSelectedSongsFromDatabaseCommand(object _songs)
         {
@@ -109,14 +104,16 @@ namespace Mp3_Database.ViewModel
         }
         #endregion
 
-
-        #region Удалить песни в списке вновь добавляемые из бызы
+        #region Удалить песни в списке новые из бызы
         public ICommand RemoveeNewSongsFromDatabaseCommand { get; }
         public void ExecuteRemoveSongsFromDatabaseCommand()
         {
-            Repository.RemoveSongs(NewSongsList);
+            foreach (var item in Repository.RemoveSongs(NewSongsList))
+            {
+                Song found = ExistingSongs.FirstOrDefault(s => s.Artist == item.Artist && s.Title == item.Title);
+                ExistingSongs.Remove(found);
+            }
             NewSongsList.Clear();
-            NewSongCanExecuteEventsRise();
         }
 
         public bool CanExecuteRemoveSongsFromDatabaseCommand()
@@ -127,7 +124,7 @@ namespace Mp3_Database.ViewModel
         }
         #endregion
 
-        #region CopyNewSongsComand
+        #region Копировать новые песни в базу и в папку
         public ICommand CopyNewSongsCommand { get; }
         public void ExecuteCopyNewSongsCommand()
         {
@@ -146,26 +143,37 @@ namespace Mp3_Database.ViewModel
             List<Song> newSongs = new List<Song>();
             foreach (Song song in NewSongsList)
             {
-                if (ExistingSongs.Count(eSong => eSong.Artist == song.Artist & eSong.Title == song.Title) == 0)
+                if (!ExistingSongs.Any(eSong => eSong.Artist == song.Artist & eSong.Title == song.Title))
                     newSongs.Add(song);
             }
 
             foreach (var song in newSongs)
             {
-                CopyNewSongsToOutputFolder(song, outputDir);
+                Task.Run(() =>
+                {
+                    CopyNewSongsToOutputFolder(song, outputDir);
+                });
                 song.ExistEarlier = true;
+                ExistingSongs.Add(song);
             }
 
             Repository.AddSongs(newSongs);
 
             if (Directory.Exists($".\\{outputDir}"))
             {
-                Process.Start($".\\{outputDir}\\");
+                using (Process proc = new Process())
+                {
+                    proc.StartInfo.FileName = $".\\{outputDir}\\";
+                    proc.StartInfo.UseShellExecute = true;
+                    proc.Start();
+                }
             }
             else
             {
                 MessageBox.Show("Что то пошло не так и не создалась папка для файлов");
             }
+
+            UpdateDuplicateSongCounter();
         }
 
         public bool CanExecuteCopyNewSongsCommand()
@@ -189,11 +197,10 @@ namespace Mp3_Database.ViewModel
             fileName = r.Replace(fileName, "");
 
             File.Copy(song.FilePath, $".\\{folder}\\{fileName}", overwrite: true);
-            UpdateDuplicateSongCounter();
         }
         #endregion
 
-        #region AddToDatabaseComand
+        #region Только добавить треки в базу
         public ICommand OnlyAddToDatabaseCommand { get; }
         public void ExecuteOnlyAddToDatabaseCommand()
         {
@@ -202,7 +209,6 @@ namespace Mp3_Database.ViewModel
             {
                 song.ExistEarlier = true;
             }
-            UpdateDuplicateSongCounter();
         }
 
         public bool CanExecuteOnlyAddToDatabaseCommand()
@@ -217,7 +223,6 @@ namespace Mp3_Database.ViewModel
         public RelayCommand<DragEventArgs> DropNewSongsCommand { get; }
         private void Drop(DragEventArgs e)
         {
-
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
             if (files != null && files.Length == 1) // если это одна папка отметим это чтобы переименовать выходную папку
@@ -240,15 +245,38 @@ namespace Mp3_Database.ViewModel
             {
                 NewSongsList.Add(song);
             }
-            UpdateDuplicateSongCounter();
-            NewSongCanExecuteEventsRise();
-        }
 
+            UpdateDuplicateSongCounter();
+        }
+        #endregion
+
+        /// <summary>
+        /// Проверить есть ли новые треки в базе и отметить их
+        /// </summary>
         private void UpdateDuplicateSongCounter()
         {
-            DuplicateSongCount = NewSongsList.Count(x => x.ExistEarlier);
+            DuplicateSongCount = 0;
+
+            if (NewSongsList == null || NewSongsList.Count == 0)
+                return;
+
+            foreach (var item in NewSongsList)
+            {
+                if (ExistingSongs.Any(s => s.Artist == item.Artist && s.Title == item.Title))
+                {
+                    item.ExistEarlier = true;
+                    DuplicateSongCount++;
+                }
+                else
+                    item.ExistEarlier = false;
+            }
         }
 
+        /// <summary>
+        /// Рекурсивно получить список путей файлов 
+        /// </summary>
+        /// <param name="files"></param>
+        /// <returns></returns>
         private List<string> GetFilePathsRecursive(string[] files)
         {
             List<string> filePathsListForReturn = new List<string>();
@@ -263,14 +291,14 @@ namespace Mp3_Database.ViewModel
                 else
                 {
                     if (file.EndsWith(".mP3", StringComparison.CurrentCultureIgnoreCase))
-                    {
                         filePathsListForReturn.Add(file);
-                    }
                 }
             }
-
             return filePathsListForReturn;
         }
+
+
+        //https://github.com/mono/taglib-sharp
 
         private ObservableCollection<Song> CreateListOfSongs(List<string> filesList)
         {
@@ -358,6 +386,5 @@ namespace Mp3_Database.ViewModel
             sb.Clear();
         }
 
-        #endregion
     }
 }
